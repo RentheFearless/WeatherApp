@@ -13,8 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -36,11 +34,13 @@ import androidx.compose.ui.unit.sp
 import com.example.weatherapp.ui.theme.WeatherAppTheme
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
+fun SearchScreen(
+    onSearch: (city: String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     // rememberSaveable — стан переживає поворот екрана
     var city by rememberSaveable { mutableStateOf("") }
     var showError by rememberSaveable { mutableStateOf(false) }
-    var searchedCity by rememberSaveable { mutableStateOf<String?>(null) }
     val focusManager = LocalFocusManager.current
 
     fun search() {
@@ -50,8 +50,8 @@ fun SearchScreen(modifier: Modifier = Modifier) {
             return
         }
         showError = false
-        searchedCity = trimmed
         focusManager.clearFocus() // ховаємо клавіатуру
+        onSearch(trimmed)        // перехід на екран результатів
     }
 
     Scaffold(modifier = modifier.fillMaxSize()) { innerPadding ->
@@ -110,25 +110,6 @@ fun SearchScreen(modifier: Modifier = Modifier) {
             ) {
                 Text("Знайти погоду", style = MaterialTheme.typography.titleMedium)
             }
-
-            // Тимчасовий результат — у Лабі 2 тут буде перехід на екран результатів
-            searchedCity?.let { name ->
-                Spacer(Modifier.height(24.dp))
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    ),
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        text = "Шукаємо погоду для: $name",
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
         }
     }
 }
@@ -136,11 +117,11 @@ fun SearchScreen(modifier: Modifier = Modifier) {
 @Preview(name = "Темна", showBackground = true)
 @Composable
 private fun SearchScreenDarkPreview() {
-    WeatherAppTheme(darkTheme = true) { SearchScreen() }
+    WeatherAppTheme(darkTheme = true) { SearchScreen(onSearch = {}) }
 }
 
 @Preview(name = "Світла", showBackground = true)
 @Composable
 private fun SearchScreenLightPreview() {
-    WeatherAppTheme(darkTheme = false) { SearchScreen() }
+    WeatherAppTheme(darkTheme = false) { SearchScreen(onSearch = {}) }
 }
