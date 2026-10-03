@@ -5,13 +5,17 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.weatherapp.ui.screens.ResultsScreen
 import com.example.weatherapp.ui.screens.SearchScreen
+import com.example.weatherapp.ui.screens.SearchViewModel
 
 private const val ANIM_MS = 350
 
@@ -39,8 +43,22 @@ fun WeatherNavHost(modifier: Modifier = Modifier) {
         }
     ) {
         composable<SearchRoute> {
+            val viewModel: SearchViewModel = viewModel(factory = SearchViewModel.Factory)
+            // collectAsStateWithLifecycle: підписка на Flow лише коли екран видно
+            val recentCities by viewModel.recentCities.collectAsStateWithLifecycle()
+            val apiKey by viewModel.apiKey.collectAsStateWithLifecycle()
+
             SearchScreen(
-                onSearch = { city -> navController.navigate(ResultsRoute(city)) }
+                recentCities = recentCities,
+                apiKey = apiKey,
+                onSearch = { city ->
+                    viewModel.onSearch(city)                 // запис в історію (Room)
+                    navController.navigate(ResultsRoute(city))
+                },
+                onRemoveCity = viewModel::removeCity,
+                onClearHistory = viewModel::clearHistory,
+                onSaveApiKey = viewModel::saveApiKey,
+                onClearApiKey = viewModel::clearApiKey
             )
         }
 
