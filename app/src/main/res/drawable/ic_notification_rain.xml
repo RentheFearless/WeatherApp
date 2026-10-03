@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Монохромна іконка для рядка стану: хмара з краплями -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M17.5,6.5C16.7,4.2 14.5,2.5 12,2.5c-2.9,0 -5.3,2.2 -5.6,5C4.2,7.8 2.5,9.7 2.5,12c0,2.5 2,4.5 4.5,4.5h10c2.2,0 4,-1.8 4,-4C21,10.4 19.5,6.7 17.5,6.5z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8,18.5l-1,3h1.5l1,-3zM12,18.5l-1,3h1.5l1,-3zM16,18.5l-1,3h1.5l1,-3z" />
+</vector>

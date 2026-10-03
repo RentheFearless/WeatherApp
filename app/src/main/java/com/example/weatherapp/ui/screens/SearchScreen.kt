@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.AlertDialog
@@ -61,6 +62,7 @@ fun SearchScreen(
     onClearHistory: () -> Unit,
     onSaveApiKey: (key: String) -> Unit,
     onClearApiKey: () -> Unit,
+    onCheckWeatherNow: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     // rememberSaveable — стан переживає поворот екрана
@@ -86,6 +88,10 @@ fun SearchScreen(
             TopAppBar(
                 title = {},
                 actions = {
+                    // Лаба 5: ручний запуск фонової перевірки погоди
+                    IconButton(onClick = onCheckWeatherNow, enabled = recentCities.isNotEmpty()) {
+                        Icon(Icons.Filled.Notifications, contentDescription = "Перевірити дощ зараз")
+                    }
                     IconButton(onClick = { showKeyDialog = true }) {
                         Icon(Icons.Filled.Settings, contentDescription = "API-ключ")
                     }

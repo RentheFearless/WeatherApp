@@ -4,6 +4,8 @@
 
     <!-- Лаба 4: доступ до мережі для OpenWeatherMap API -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Лаба 5: сповіщення (Android 13+ питає дозвіл у користувача) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".WeatherApplication"

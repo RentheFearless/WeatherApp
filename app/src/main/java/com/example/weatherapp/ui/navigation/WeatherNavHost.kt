@@ -1,5 +1,6 @@
 package com.example.weatherapp.ui.navigation
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -7,22 +8,26 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.example.weatherapp.ui.screens.ResultsScreen
 import com.example.weatherapp.ui.screens.ResultsViewModel
 import com.example.weatherapp.ui.screens.SearchScreen
 import com.example.weatherapp.ui.screens.SearchViewModel
+import com.example.weatherapp.work.WeatherWorkScheduler
 
 private const val ANIM_MS = 350
 
 @Composable
 fun WeatherNavHost(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
+    val context = LocalContext.current
 
     NavHost(
         navController = navController,
@@ -59,11 +64,18 @@ fun WeatherNavHost(modifier: Modifier = Modifier) {
                 onRemoveCity = viewModel::removeCity,
                 onClearHistory = viewModel::clearHistory,
                 onSaveApiKey = viewModel::saveApiKey,
-                onClearApiKey = viewModel::clearApiKey
+                onClearApiKey = viewModel::clearApiKey,
+                onCheckWeatherNow = {
+                    WeatherWorkScheduler.runNow(context)
+                    Toast.makeText(context, "Перевіряємо погоду у фоні…", Toast.LENGTH_SHORT).show()
+                }
             )
         }
 
-        composable<ResultsRoute> { backStackEntry ->
+        // deepLinks: сповіщення відкриває weatherapp://results/{city}
+        composable<ResultsRoute>(
+            deepLinks = listOf(navDeepLink<ResultsRoute>(basePath = DEEP_LINK_RESULTS))
+        ) { backStackEntry ->
             // toRoute() відновлює типізований об'єкт маршруту з аргументами
             val route: ResultsRoute = backStackEntry.toRoute()
             // ViewModel сама дістає city з SavedStateHandle того ж маршруту
