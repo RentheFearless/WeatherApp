@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.weatherapp.ui.screens.ResultsScreen
+import com.example.weatherapp.ui.screens.ResultsViewModel
 import com.example.weatherapp.ui.screens.SearchScreen
 import com.example.weatherapp.ui.screens.SearchViewModel
 
@@ -65,9 +66,15 @@ fun WeatherNavHost(modifier: Modifier = Modifier) {
         composable<ResultsRoute> { backStackEntry ->
             // toRoute() відновлює типізований об'єкт маршруту з аргументами
             val route: ResultsRoute = backStackEntry.toRoute()
+            // ViewModel сама дістає city з SavedStateHandle того ж маршруту
+            val viewModel: ResultsViewModel = viewModel(factory = ResultsViewModel.Factory)
+            val state by viewModel.uiState.collectAsStateWithLifecycle()
+
             ResultsScreen(
                 city = route.city,
-                onBack = { navController.popBackStack() }
+                state = state,
+                onBack = { navController.popBackStack() },
+                onRefresh = viewModel::refresh
             )
         }
     }

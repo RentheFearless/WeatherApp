@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.weatherapp.WeatherApplication
 import com.example.weatherapp.data.SearchHistoryRepository
-import com.example.weatherapp.data.local.WeatherDatabase
 import com.example.weatherapp.data.secure.SecureStorage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -56,15 +56,13 @@ class SearchViewModel(
     }
 
     companion object {
-        /** Фабрика: створює ViewModel із базою та сховищем (поки без DI-бібліотек). */
+        /** Фабрика: бере залежності з AppContainer (ручний DI). */
         val Factory = viewModelFactory {
             initializer {
-                val app = checkNotNull(this[APPLICATION_KEY])
+                val app = checkNotNull(this[APPLICATION_KEY]) as WeatherApplication
                 SearchViewModel(
-                    history = SearchHistoryRepository(
-                        WeatherDatabase.getInstance(app).searchHistoryDao()
-                    ),
-                    secureStorage = SecureStorage(app)
+                    history = app.container.searchHistoryRepository,
+                    secureStorage = app.container.secureStorage
                 )
             }
         }
