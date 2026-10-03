@@ -36,6 +36,10 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        // android.* у JVM-тестах повертають значення за замовчуванням замість винятку
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -65,6 +69,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     testImplementation(libs.junit)
+    // Лаба 6: unit-тести
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)

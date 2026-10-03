@@ -1,6 +1,5 @@
 package com.example.weatherapp.ui.screens
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.createSavedStateHandle
@@ -29,13 +28,14 @@ data class ResultsUiState(
     val error: String? = null
 )
 
+/**
+ * city приходить у конструктор (а не SavedStateHandle напряму),
+ * щоб ViewModel легко тестувалась без Android (Лаба 6).
+ */
 class ResultsViewModel(
-    savedStateHandle: SavedStateHandle,
+    val city: String,
     private val repository: WeatherRepository
 ) : ViewModel() {
-
-    /** Типізований аргумент з навігації (Лаба 2). */
-    val city: String = savedStateHandle.toRoute<ResultsRoute>().city
 
     private val loading = MutableStateFlow(true)
     private val error = MutableStateFlow<String?>(null)
@@ -77,7 +77,8 @@ class ResultsViewModel(
             initializer {
                 val app = checkNotNull(this[APPLICATION_KEY]) as WeatherApplication
                 ResultsViewModel(
-                    savedStateHandle = createSavedStateHandle(),
+                    // Типізований аргумент з навігації (Лаба 2)
+                    city = createSavedStateHandle().toRoute<ResultsRoute>().city,
                     repository = app.container.weatherRepository
                 )
             }
